@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Booked AI — Engineering case study — Rifah Nazar</title>
+  <meta name="description" content="Booked AI: an engineering case study of a multi-agent travel assistant across Outlook and WhatsApp, orchestrating 30+ APIs with LangGraph." />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="../index.html">Rifah Nazar</a>
+      <nav class="nav-links">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../workflow.html">AI Workflow</a>
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-toggle" aria-label="Toggle theme" onclick="toggleTheme()">☽</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero">
+      <div class="wrap narrow">
+        <a class="backlink" href="../index.html#projects">← All projects</a>
+        <div class="badge-row" style="margin-top:16px;">
+          <span class="pill neutral">Engineering case study</span>
+          <span class="pill neutral">Multi-agent</span>
+        </div>
+        <h1>Booked AI</h1>
+        <p class="subtitle">A production multi-agent travel assistant spanning Outlook and WhatsApp, orchestrating 30+ APIs. This is an engineering case study — no confidential code, just the decisions.</p>
+      </div>
+    </section>
+
+    <div class="case-body">
+      <div class="wrap narrow">
+
+        <section class="case-section reveal">
+          <div class="callout">
+            <p>This is a written case study rather than a code repository. The product is proprietary, so what follows is the <strong>engineering</strong> — the problems, the tradeoffs, and my specific contributions — with confidential details omitted.</p>
+          </div>
+        </section>
+
+        <!-- PROBLEM -->
+        <section class="case-section reveal">
+          <h2>Problem</h2>
+          <p>Travellers wanted to plan and manage trips by simply messaging — the same way they'd text a knowledgeable travel agent — across the channels they already use: <strong>Outlook</strong> for email and <strong>WhatsApp</strong> for chat. Behind that simple interface sits a large amount of real-world complexity: flights, hotels, itineraries, calendars, and payments, each with its own API and failure modes.</p>
+          <div class="meta-grid">
+            <div class="cell"><div class="label">Domain</div><div class="value">Travel</div></div>
+            <div class="cell"><div class="label">Channels</div><div class="value">Outlook + WhatsApp</div></div>
+            <div class="cell"><div class="label">Integrations</div><div class="value">30+ APIs</div></div>
+            <div class="cell"><div class="label">Pattern</div><div class="value">Multi-agent graph</div></div>
+          </div>
+        </section>
+
+        <!-- CHALLENGES -->
+        <section class="case-section reveal">
+          <h2>Engineering challenges</h2>
+
+          <div class="decision">
+            <h4>30+ APIs</h4>
+            <p>Each provider had different auth, schemas, rate limits and error semantics. The system needed a consistent tool interface over inconsistent backends so agents could reason about capabilities rather than HTTP quirks.</p>
+          </div>
+          <div class="decision">
+            <h4>State management</h4>
+            <p>A trip is a long-running, multi-turn conversation that can span days and channels. Keeping durable, coherent state — what's booked, what's pending, what the user last asked — across Outlook and WhatsApp was the hardest part.</p>
+          </div>
+          <div class="decision">
+            <h4>Latency</h4>
+            <p>Chaining model calls and slow third-party APIs makes latency compound quickly. Keeping responses conversational meant parallelising tool calls, streaming, and being deliberate about when to think versus when to act.</p>
+          </div>
+          <div class="decision">
+            <h4>Prompt consistency</h4>
+            <p>With many agents and tools, small prompt drift produced large behavioural drift. Prompts had to be structured, versioned and constrained so behaviour stayed stable across releases.</p>
+          </div>
+          <div class="decision">
+            <h4>Evaluation &amp; observability</h4>
+            <p>You cannot improve what you cannot see. Every run was traced so failures could be reproduced, and behaviour was measured against evaluation sets rather than eyeballed.</p>
+          </div>
+        </section>
+
+        <!-- MY CONTRIBUTIONS -->
+        <section class="case-section reveal">
+          <h2>My contributions</h2>
+          <ul class="check-list">
+            <li><strong>I designed</strong> the multi-agent graph — how work is decomposed, routed between agents, and recombined into a single reply to the user.</li>
+            <li><strong>I implemented</strong> the tool layer that wraps the external APIs behind a consistent, model-friendly interface (via MCP), including retries and error normalisation.</li>
+            <li><strong>I owned</strong> the state-management approach that keeps a trip coherent across turns and across the Outlook and WhatsApp channels.</li>
+            <li><strong>I built out</strong> the observability and evaluation loop with Langfuse so regressions were caught in tracing and eval, not in production.</li>
+          </ul>
+          <p class="faint">Placeholder framing — replace each line with the exact scope you owned so a reader knows precisely what was yours.</p>
+        </section>
+
+        <!-- STACK -->
+        <section class="case-section reveal">
+          <h2>Stack</h2>
+          <div class="stack-grid">
+            <span class="stack-item">LangGraph</span>
+            <span class="stack-item">LangChain</span>
+            <span class="stack-item">MCP</span>
+            <span class="stack-item">FastAPI</span>
+            <span class="stack-item">Next.js</span>
+            <span class="stack-item">Railway</span>
+            <span class="stack-item">Langfuse</span>
+          </div>
+          <div class="flow wide">
+            <div class="flow-node">Outlook / WhatsApp <span class="note">channels</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">FastAPI gateway <span class="note">ingress</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node accent">LangGraph multi-agent <span class="note">routing + state</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">MCP tool layer <span class="note">30+ APIs</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">Langfuse <span class="note">tracing + eval</span></div>
+          </div>
+        </section>
+
+        <!-- BIGGEST CHALLENGE STORY -->
+        <section class="case-section reveal">
+          <h2>The biggest engineering challenge</h2>
+          <p><em>Tell the story here — a memorable, specific narrative is what founders remember. A suggested shape:</em></p>
+          <div class="callout">
+            <p><strong>Setup —</strong> Describe the moment it broke: e.g. an agent confidently booked against stale state after a channel switch, and the user got a contradictory confirmation.</p>
+            <p><strong>Investigation —</strong> What the traces revealed. How you reproduced it. The root cause (state, latency race, prompt drift?).</p>
+            <p><strong>Resolution —</strong> The design change you made, and how you proved it was fixed — with evaluation, not vibes.</p>
+            <p><strong>Takeaway —</strong> One sentence on the principle you'd carry to the next system.</p>
+          </div>
+        </section>
+
+        <section class="case-section reveal">
+          <a class="btn" href="../projects/inbox-copilot.html">← Inbox Copilot</a>
+          <a class="btn btn-primary" href="../projects/llm-observability.html">Next: LLM Observability →</a>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span class="faint">© 2026 Rifah Nazar</span>
+      <div class="social">
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

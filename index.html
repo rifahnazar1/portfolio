@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rifah Nazar — Software Engineer | AI Engineer</title>
+  <meta name="description" content="Rifah Nazar — Software Engineer & AI Engineer building production AI systems, agentic workflows, and full-stack applications." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="index.html">Rifah Nazar</a>
+      <nav class="nav-links">
+        <a href="#projects">Projects</a>
+        <a href="workflow.html">AI Workflow</a>
+        <a href="#" data-resume>Resume</a>
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-toggle" aria-label="Toggle theme" onclick="toggleTheme()">☽</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wrap">
+        <div class="eyebrow mono">// available for agentic engineering roles</div>
+        <h1>Rifah Nazar</h1>
+        <div class="roles"><b>Software Engineer</b> &nbsp;·&nbsp; <b>AI Engineer</b></div>
+        <p class="lead">Building production AI systems, agentic workflows, and full-stack applications — with a focus on evaluation, reliability, and observability over one-off prompts.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#" data-resume>Resume</a>
+          <a class="btn" href="https://github.com/" target="_blank" rel="noopener">GitHub ↗</a>
+          <a class="btn" href="https://linkedin.com/" target="_blank" rel="noopener">LinkedIn ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED PROJECTS -->
+    <section class="section" id="projects">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker">Featured work</div>
+          <h2>Three projects, engineered end-to-end</h2>
+          <p class="muted narrow">Each answers the questions senior engineers ask: What problem? Why this architecture? What tradeoffs? How was it tested? What would I improve?</p>
+        </div>
+
+        <div class="projects">
+          <!-- Hero project -->
+          <a class="project-card hero-project reveal" href="projects/inbox-copilot.html">
+            <div class="badge-row">
+              <span class="pill">⭐ Hero project</span>
+              <span class="pill neutral">Agentic workflow</span>
+            </div>
+            <h3>Inbox Copilot</h3>
+            <p>AI-powered customer-support workflow built with Claude, n8n, Gmail, Slack and Google Sheets — with confidence thresholds, human approval, and retry handling.</p>
+            <div class="tech-row">
+              <span class="stack-item">Claude</span>
+              <span class="stack-item">n8n</span>
+              <span class="stack-item">Docker</span>
+              <span class="stack-item">PostgreSQL</span>
+              <span class="stack-item">Gmail API</span>
+              <span class="stack-item">Slack API</span>
+            </div>
+            <div class="arrow">Read the case study →</div>
+          </a>
+
+          <!-- Booked AI -->
+          <a class="project-card reveal" href="projects/booked-ai.html">
+            <div class="badge-row">
+              <span class="pill neutral">Engineering case study</span>
+              <span class="pill neutral">Multi-agent</span>
+            </div>
+            <h3>Booked AI</h3>
+            <p>A travel assistant spanning Outlook + WhatsApp, orchestrating 30+ APIs with LangGraph. A study in state management, latency, prompt consistency, and observability.</p>
+            <div class="tech-row">
+              <span class="stack-item">LangGraph</span>
+              <span class="stack-item">LangChain</span>
+              <span class="stack-item">MCP</span>
+              <span class="stack-item">FastAPI</span>
+              <span class="stack-item">Next.js</span>
+              <span class="stack-item">Langfuse</span>
+            </div>
+            <div class="arrow">Read the case study →</div>
+          </a>
+
+          <!-- LLM Observability -->
+          <a class="project-card reveal" href="projects/llm-observability.html">
+            <div class="badge-row">
+              <span class="pill neutral">Full-stack + data</span>
+              <span class="pill neutral">Open source</span>
+            </div>
+            <h3>LLM Observability Dashboard</h3>
+            <p>Ingest LLM calls and track cost, latency (P95), and usage per app / user / model. Trends, projections, drill-down, a Python SDK, and a polished dashboard.</p>
+            <div class="tech-row">
+              <span class="stack-item">FastAPI</span>
+              <span class="stack-item">Streamlit</span>
+              <span class="stack-item">Plotly</span>
+              <span class="stack-item">SQLAlchemy</span>
+              <span class="stack-item">Python SDK</span>
+            </div>
+            <div class="arrow">Read the case study →</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORKFLOW TEASER -->
+    <section class="section" id="workflow-teaser">
+      <div class="wrap">
+        <div class="callout" style="display:flex; flex-wrap:wrap; gap:20px; align-items:center; justify-content:space-between;">
+          <div style="flex:1; min-width:280px;">
+            <h3 style="color:var(--text); margin-bottom:6px;">How I build with AI</h3>
+            <p class="muted" style="margin:0;">Requirement → Specification → Claude Code → Cursor → Manual review → Unit tests → Evaluation → Debugging → Production. The same engineering philosophy, applied to my own workflow.</p>
+          </div>
+          <a class="btn btn-primary" href="workflow.html">My AI Development Workflow →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span class="faint">© 2026 Rifah Nazar</span>
+      <div class="social">
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="#" data-resume>Resume</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

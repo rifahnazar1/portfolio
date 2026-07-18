@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inbox Copilot — Rifah Nazar</title>
+  <meta name="description" content="Inbox Copilot: an AI-powered customer support workflow built with Claude, n8n, Gmail, Slack and Google Sheets, with confidence thresholds and human approval." />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="../index.html">Rifah Nazar</a>
+      <nav class="nav-links">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../workflow.html">AI Workflow</a>
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-toggle" aria-label="Toggle theme" onclick="toggleTheme()">☽</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero">
+      <div class="wrap narrow">
+        <a class="backlink" href="../index.html#projects">← All projects</a>
+        <div class="badge-row" style="margin-top:16px;">
+          <span class="pill">⭐ Hero project</span>
+          <span class="pill neutral">Agentic workflow</span>
+        </div>
+        <h1>Inbox Copilot</h1>
+        <p class="subtitle">An AI-powered customer-support workflow that drafts replies, checks its own confidence, and routes uncertain cases to a human before anything reaches the customer.</p>
+      </div>
+    </section>
+
+    <div class="case-body">
+      <div class="wrap narrow">
+
+        <!-- OVERVIEW -->
+        <section class="case-section reveal">
+          <h2>Overview</h2>
+          <p>Inbox Copilot turns an inbound support inbox into a semi-autonomous workflow. Incoming Gmail messages are classified, matched against an FAQ knowledge base, and answered by Claude. Every draft is scored for confidence — high-confidence replies are queued for one-click human approval in Slack, while low-confidence or sensitive cases are escalated. Approved replies are sent back through Gmail, and every step is logged to Google Sheets for auditing.</p>
+          <div class="meta-grid">
+            <div class="cell"><div class="label">Role</div><div class="value">Sole engineer</div></div>
+            <div class="cell"><div class="label">Type</div><div class="value">Agentic workflow</div></div>
+            <div class="cell"><div class="label">Orchestration</div><div class="value">n8n</div></div>
+            <div class="cell"><div class="label">Model</div><div class="value">Claude</div></div>
+          </div>
+        </section>
+
+        <!-- ARCHITECTURE -->
+        <section class="case-section reveal">
+          <h2>Architecture</h2>
+          <p>A single linear pipeline with a human-in-the-loop gate. Each node does one job and hands structured JSON to the next.</p>
+          <div class="flow">
+            <div class="flow-node">Gmail <span class="note">inbound trigger</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">n8n <span class="note">orchestration</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node accent">Claude <span class="note">classify + draft</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">FAQ Retrieval <span class="note">knowledge base</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node accent">Confidence Check <span class="note">threshold gate</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">Slack Approval <span class="note">human-in-the-loop</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">Gmail Reply <span class="note">send</span></div>
+          </div>
+          <p class="faint">Every node also writes a structured event to Google Sheets for logging and later evaluation.</p>
+        </section>
+
+        <!-- TECH -->
+        <section class="case-section reveal">
+          <h2>Tech stack</h2>
+          <div class="stack-grid">
+            <span class="stack-item">Claude</span>
+            <span class="stack-item">n8n</span>
+            <span class="stack-item">Docker</span>
+            <span class="stack-item">PostgreSQL</span>
+            <span class="stack-item">Gmail API</span>
+            <span class="stack-item">Slack API</span>
+            <span class="stack-item">Google Sheets API</span>
+          </div>
+          <p class="faint">n8n runs in Docker with PostgreSQL as its execution store, so workflow state and run history survive restarts.</p>
+        </section>
+
+        <!-- ENGINEERING DECISIONS -->
+        <section class="case-section reveal">
+          <h2>Engineering decisions</h2>
+
+          <div class="decision">
+            <h4>Why human approval?</h4>
+            <p>Support replies are customer-facing and hard to unsend. A human approval gate makes the worst-case outcome "a reply is delayed" instead of "a wrong or off-brand reply was sent." It also produced a stream of labelled good/bad drafts I could use to evaluate and improve the system.</p>
+          </div>
+
+          <div class="decision">
+            <h4>Why confidence thresholds?</h4>
+            <p>Not every message deserves the same trust. Claude returns a confidence score alongside each draft; above the threshold the draft is queued for quick approval, below it the message is escalated with the reason. This concentrates human attention on exactly the cases where the model is unsure.</p>
+          </div>
+
+          <div class="decision">
+            <h4>Why JSON output?</h4>
+            <p>The model returns a strict JSON object — intent, chosen FAQ, draft reply, confidence, and an escalation flag — so downstream n8n nodes can branch on fields instead of parsing prose. Structured output is what makes the confidence gate and logging possible at all.</p>
+          </div>
+
+          <div class="decision">
+            <h4>Failure handling &amp; retry logic</h4>
+            <p>API calls (Gmail, Claude, Slack) are wrapped with bounded retries and exponential backoff. Malformed model output is caught and re-requested once; if it still fails validation, the message is escalated to a human rather than dropped. Nothing silently disappears — every terminal state is logged.</p>
+          </div>
+        </section>
+
+        <!-- EVALUATION -->
+        <section class="case-section reveal">
+          <h2>Evaluation</h2>
+          <p>Prompting alone was never going to be trustworthy, so the system was tested against a fixed set of representative scenarios — including the ones designed to make it fail.</p>
+          <div class="callout">
+            <p><strong>Tested six customer scenarios</strong> including refund requests, abusive messages, missing FAQs and low-confidence responses — checking not just whether the reply was good, but whether the system correctly <em>escalated</em> when it should have.</p>
+          </div>
+          <div class="table-scroll">
+          <table class="scenario-table">
+            <thead>
+              <tr><th>Scenario</th><th>Expected behaviour</th><th>What it validates</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Standard FAQ question</td><td>High confidence, correct FAQ, queued for approval</td><td>Happy path + retrieval</td></tr>
+              <tr><td>Refund request</td><td>Draft + escalate (policy-sensitive)</td><td>Sensitive-case routing</td></tr>
+              <tr><td>Abusive message</td><td>No auto-reply, flag for human</td><td>Safety / tone handling</td></tr>
+              <tr><td>Question with no matching FAQ</td><td>Low confidence, escalate</td><td>Knowledge-gap detection</td></tr>
+              <tr><td>Ambiguous multi-question email</td><td>Low confidence, escalate</td><td>Threshold calibration</td></tr>
+              <tr><td>Malformed / empty message</td><td>Graceful handling, logged</td><td>Failure handling</td></tr>
+            </tbody>
+          </table>
+          </div>
+          <ul class="check-list">
+            <li>Each scenario was run repeatedly to check the confidence gate behaved consistently, not just once.</li>
+            <li>Escalation was treated as a correct outcome — a system that knows when to ask for help beats one that always answers.</li>
+          </ul>
+        </section>
+
+        <!-- SCREENSHOTS -->
+        <section class="case-section reveal">
+          <h2>Screenshots</h2>
+          <div class="shots">
+            <figure class="shot"><div class="frame">n8n workflow canvas<br/>[ drop screenshot ]</div><figcaption class="cap">The full n8n workflow, trigger to send.</figcaption></figure>
+            <figure class="shot"><div class="frame">Slack approval message<br/>[ drop screenshot ]</div><figcaption class="cap">One-click approve / edit / escalate in Slack.</figcaption></figure>
+            <figure class="shot"><div class="frame">Gmail draft &amp; reply<br/>[ drop screenshot ]</div><figcaption class="cap">Approved reply sent back through Gmail.</figcaption></figure>
+            <figure class="shot"><div class="frame">Google Sheets log<br/>[ drop screenshot ]</div><figcaption class="cap">Structured event log used for evaluation.</figcaption></figure>
+          </div>
+        </section>
+
+        <!-- LESSONS -->
+        <section class="case-section reveal">
+          <h2>Lessons learned</h2>
+          <div class="callout">
+            <p><strong>Prompt engineering wasn't enough.</strong> Reliability came from evaluation, confidence thresholds and human approval — not from better prompts alone. The prompt gets you a plausible draft; the system around it is what makes the output <em>trustworthy</em>.</p>
+          </div>
+          <p>The second lesson was that "escalate when unsure" is a feature, not a failure. Once escalation was a first-class outcome, the whole system got easier to reason about and safer to deploy.</p>
+        </section>
+
+        <section class="case-section reveal">
+          <a class="btn" href="../index.html#projects">← Back to projects</a>
+          <a class="btn btn-primary" href="../projects/booked-ai.html">Next: Booked AI →</a>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span class="faint">© 2026 Rifah Nazar</span>
+      <div class="social">
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

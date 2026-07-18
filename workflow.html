@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My AI Development Workflow — Rifah Nazar</title>
+  <meta name="description" content="How Rifah Nazar builds with AI: requirement to production, with specification, Claude Code, Cursor, manual review, unit tests, evaluation and debugging." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="index.html">Rifah Nazar</a>
+      <nav class="nav-links">
+        <a href="index.html#projects">Projects</a>
+        <a href="workflow.html">AI Workflow</a>
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-toggle" aria-label="Toggle theme" onclick="toggleTheme()">☽</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero">
+      <div class="wrap narrow">
+        <a class="backlink" href="index.html">← Home</a>
+        <div class="badge-row" style="margin-top:16px;">
+          <span class="pill">Agentic engineering</span>
+        </div>
+        <h1>My AI Development Workflow</h1>
+        <p class="subtitle">How I build software with AI in the loop — deliberate, specification-first, and gated by review and evaluation before anything reaches production.</p>
+      </div>
+    </section>
+
+    <div class="case-body">
+      <div class="wrap narrow">
+
+        <section class="case-section reveal">
+          <div class="flow wide" style="margin-inline:auto;">
+            <div class="flow-node">Requirement</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">Specification</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node accent">Claude Code</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node accent">Cursor</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">Manual review</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">Unit tests</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node accent">Evaluation</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">Debugging</div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node accent">Production</div>
+          </div>
+        </section>
+
+        <section class="case-section reveal">
+          <div class="workflow-step">
+            <div class="num">1</div>
+            <div>
+              <h3>Requirement</h3>
+              <p>I start from the actual problem and the user outcome, not the feature. Getting the "why" precise up front prevents building the wrong thing fast.</p>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="num">2</div>
+            <div>
+              <h3>Specification</h3>
+              <p>I write a short, concrete spec — inputs, outputs, edge cases, and acceptance criteria. This is what makes AI-assisted coding reliable: a clear spec is a better prompt than any clever instruction.</p>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="num">3</div>
+            <div>
+              <h3>Claude Code</h3>
+              <p>I use Claude Code for the larger, multi-file moves — scaffolding, refactors, and changes that need to reason across the whole codebase from the spec.</p>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="num">4</div>
+            <div>
+              <h3>Cursor</h3>
+              <p>For tighter, in-editor iteration I switch to Cursor — quick edits, inline exploration, and staying in the flow while shaping a single file or function.</p>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="num">5</div>
+            <div>
+              <h3>Manual review</h3>
+              <p>I read every line before it lands. AI accelerates writing; it doesn't remove ownership. I'm accountable for what ships, so I review for correctness, clarity and intent.</p>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="num">6</div>
+            <div>
+              <h3>Unit tests</h3>
+              <p>I cover the logic that matters and the edge cases from the spec. Tests lock in behaviour so later AI-assisted changes can't silently regress it.</p>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="num">7</div>
+            <div>
+              <h3>Evaluation</h3>
+              <p>For anything with a model in the loop, unit tests aren't enough. I evaluate behaviour against representative scenarios — including adversarial and low-confidence cases — because reliability comes from evaluation, not prompts alone.</p>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="num">8</div>
+            <div>
+              <h3>Debugging</h3>
+              <p>When something fails I reproduce it from traces and logs, fix the root cause, and add a test or eval case so it can't come back.</p>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="num">9</div>
+            <div>
+              <h3>Production</h3>
+              <p>Shipping is the start of the loop, not the end. Observability — cost, latency and quality — feeds the next requirement.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="case-section reveal">
+          <div class="callout">
+            <p><strong>The through-line:</strong> AI writes fast, but reliability comes from specification, review and evaluation. That's the same philosophy behind every project in this portfolio.</p>
+          </div>
+          <a class="btn" href="index.html#projects">See it applied → Projects</a>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span class="faint">© 2026 Rifah Nazar</span>
+      <div class="social">
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

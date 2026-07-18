@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LLM Observability Dashboard — Rifah Nazar</title>
+  <meta name="description" content="LLM Observability Dashboard: ingest LLM calls and track cost, latency and usage per app, user and model, with a Python SDK and a polished dashboard." />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="../index.html">Rifah Nazar</a>
+      <nav class="nav-links">
+        <a href="../index.html#projects">Projects</a>
+        <a href="../workflow.html">AI Workflow</a>
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-toggle" aria-label="Toggle theme" onclick="toggleTheme()">☽</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="case-hero">
+      <div class="wrap narrow">
+        <a class="backlink" href="../index.html#projects">← All projects</a>
+        <div class="badge-row" style="margin-top:16px;">
+          <span class="pill neutral">Full-stack + data</span>
+          <span class="pill neutral">Open source</span>
+        </div>
+        <h1>LLM Observability Dashboard</h1>
+        <p class="subtitle">Ingest LLM API calls and track cost, latency and usage per app, user and model — with automatic cost estimation, projections, drill-down, a Python SDK and a polished dashboard.</p>
+      </div>
+    </section>
+
+    <div class="case-body">
+      <div class="wrap narrow">
+
+        <!-- OVERVIEW -->
+        <section class="case-section reveal">
+          <h2>Overview</h2>
+          <p>Teams shipping LLM features quickly lose visibility into what those features cost and how they behave. This project is a self-hostable observability service: an ingest API receives an event per LLM call, and a dashboard turns those events into cost, latency and usage insight — including projected monthly spend and P95 latency for SLO monitoring. A drop-in Python SDK makes instrumenting an existing app a one-liner.</p>
+          <div class="meta-grid">
+            <div class="cell"><div class="label">Role</div><div class="value">Sole engineer</div></div>
+            <div class="cell"><div class="label">API</div><div class="value">FastAPI</div></div>
+            <div class="cell"><div class="label">Dashboard</div><div class="value">Streamlit + Plotly</div></div>
+            <div class="cell"><div class="label">Store</div><div class="value">SQLite / SQLAlchemy</div></div>
+          </div>
+          <p class="callout" style="margin-top:20px;">This project aligns closely with observability-focused engineering: metrics, latency, cost, tracing and evaluation are the whole point of it.</p>
+        </section>
+
+        <!-- ARCHITECTURE -->
+        <section class="case-section reveal">
+          <h2>Architecture</h2>
+          <p>An app instruments each LLM call via the SDK; events flow to the FastAPI ingest endpoints, are persisted with SQLAlchemy, and are aggregated on read for the dashboard.</p>
+          <div class="flow wide">
+            <div class="flow-node">Your app <span class="note">any LLM call</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node accent">Python SDK <span class="note">.track() / buffered</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">FastAPI <span class="note">/v1/events, batch</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">SQLAlchemy + SQLite <span class="note">event store</span></div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node accent">Streamlit + Plotly <span class="note">dashboard</span></div>
+          </div>
+        </section>
+
+        <!-- FEATURES -->
+        <section class="case-section reveal">
+          <h2>Features</h2>
+          <div class="table-scroll">
+          <table class="scenario-table">
+            <thead><tr><th>Capability</th><th>What it does</th></tr></thead>
+            <tbody>
+              <tr><td>Ingest API</td><td>Single and batch event ingestion; cost auto-estimated from model pricing when omitted</td></tr>
+              <tr><td>Cost projection</td><td>Daily average and projected monthly spend</td></tr>
+              <tr><td>Period comparison</td><td>Current vs previous period deltas for requests, tokens and cost</td></tr>
+              <tr><td>P95 latency</td><td>Percentile latency for SLO monitoring</td></tr>
+              <tr><td>Breakdown</td><td>By app, user and model — tables plus pie / bar charts</td></tr>
+              <tr><td>Token efficiency</td><td>Tokens per request and cost per 1K tokens by model</td></tr>
+              <tr><td>Drill-down</td><td>Recent-events table for debugging individual calls</td></tr>
+              <tr><td>Model pricing</td><td>Built-in pricing for OpenAI, Anthropic and Google models; expandable</td></tr>
+              <tr><td>Python SDK</td><td>Drop-in client with single, buffered and OpenAI-helper modes</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </section>
+
+        <!-- ENGINEERING DECISIONS -->
+        <section class="case-section reveal">
+          <h2>Engineering decisions</h2>
+          <div class="decision">
+            <h4>Estimate cost when the caller can't</h4>
+            <p><span class="mono">cost_usd</span> is optional on every event — if omitted, it's derived from a built-in pricing table keyed by model. Instrumentation stays trivial (just send tokens) and cost still shows up on the dashboard.</p>
+          </div>
+          <div class="decision">
+            <h4>Aggregate on read, keep ingest cheap</h4>
+            <p>Ingest just validates and stores. Summaries, comparisons, projections and P95 are computed in the query layer, so writing an event is fast and the analytics can evolve without a migration.</p>
+          </div>
+          <div class="decision">
+            <h4>Buffered SDK mode for hot paths</h4>
+            <p>The SDK offers single, buffered (auto-flush at 10) and an OpenAI response helper — so high-throughput callers can batch without changing how they think about tracking.</p>
+          </div>
+          <div class="decision">
+            <h4>Auth and privacy where it matters</h4>
+            <p>An optional API key protects only the ingest endpoints; reads stay open for the dashboard. Prompt/completion previews can be redacted at the DB layer via a single env flag for privacy-sensitive deployments.</p>
+          </div>
+        </section>
+
+        <!-- TESTING -->
+        <section class="case-section reveal">
+          <h2>Testing</h2>
+          <p>The service ships with a pytest suite covering ingestion, cost estimation, and the aggregation endpoints, plus a seed script that generates realistic sample data so the dashboard can be exercised end-to-end.</p>
+          <ul class="check-list">
+            <li>Cost estimation verified against the pricing table for each supported model.</li>
+            <li>Aggregation endpoints (usage, summary, projection, P95) tested on seeded data.</li>
+            <li>Ingest validated for both single and batch payloads, with and without an API key.</li>
+          </ul>
+        </section>
+
+        <!-- STACK -->
+        <section class="case-section reveal">
+          <h2>Tech stack</h2>
+          <div class="stack-grid">
+            <span class="stack-item">FastAPI</span>
+            <span class="stack-item">Streamlit</span>
+            <span class="stack-item">Plotly</span>
+            <span class="stack-item">SQLAlchemy</span>
+            <span class="stack-item">SQLite</span>
+            <span class="stack-item">Pydantic</span>
+            <span class="stack-item">pytest</span>
+            <span class="stack-item">Python SDK</span>
+          </div>
+        </section>
+
+        <!-- SCREENSHOTS -->
+        <section class="case-section reveal">
+          <h2>Screenshots</h2>
+          <div class="shots">
+            <figure class="shot"><div class="frame">KPI cards + trends<br/>[ drop screenshot ]</div><figcaption class="cap">Requests, tokens, cost with vs-previous-period deltas.</figcaption></figure>
+            <figure class="shot"><div class="frame">Cost &amp; latency charts<br/>[ drop screenshot ]</div><figcaption class="cap">Plotly time-series, projection and P95 latency.</figcaption></figure>
+            <figure class="shot"><div class="frame">Breakdown by model<br/>[ drop screenshot ]</div><figcaption class="cap">Cost and token efficiency per app / user / model.</figcaption></figure>
+            <figure class="shot"><div class="frame">Event drill-down<br/>[ drop screenshot ]</div><figcaption class="cap">Recent-events table for debugging individual calls.</figcaption></figure>
+          </div>
+        </section>
+
+        <!-- FUTURE -->
+        <section class="case-section reveal">
+          <h2>Future improvements</h2>
+          <ul class="check-list">
+            <li>Swap SQLite for Postgres/ClickHouse to scale ingest and time-series queries.</li>
+            <li>Add alerting on cost/latency thresholds (Slack/webhook).</li>
+            <li>Native tracing spans to tie multi-step agent runs to their per-call costs.</li>
+            <li>Quality/eval metrics alongside cost and latency for a fuller observability picture.</li>
+          </ul>
+        </section>
+
+        <section class="case-section reveal">
+          <a class="btn" href="../projects/booked-ai.html">← Booked AI</a>
+          <a class="btn btn-primary" href="https://github.com/" target="_blank" rel="noopener">View on GitHub ↗</a>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span class="faint">© 2026 Rifah Nazar</span>
+      <div class="social">
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
